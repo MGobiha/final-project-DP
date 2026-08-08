@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+  <body data-page="dashboard">
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-badge">A</div>
+          <span>AutoTrack</span>
+        </div>
+        <nav class="nav">
+          <a data-page="dashboard" href="dashboard.html"
+            >🏠 <span>Dashboard</span></a
+          >
+          <a data-page="vehicles" href="vehicles.html"
+            >🚙 <span>Vehicles</span></a
+          >
+          <a data-page="service" href="service-history.html"
+            >🧾 <span>Service History</span></a
+          >
+          <a data-page="maintenance" href="maintenance.html"
+            >🗓️ <span>Maintenance</span></a
+          >
+          <a data-page="reminders" href="reminders.html"
+            >🔔 <span>Reminders</span></a
+          >
+          <a data-page="chatbot" href="chatbot.html"
+            >🤖 <span>AI Assistant</span></a
+          >
+          <a data-page="garages" href="garages.html">📍 <span>Garages</span></a>
+          <a data-page="news" href="news.html">📰 <span>News</span></a>
+          <a data-page="profile" href="profile.html">👤 <span>Profile</span></a>
+        </nav>
+      </aside>
+      <main class="main">
+        <header class="topbar">
+          <div class="title">
+            <h1>Dashboard</h1>
+            <p>Automobile Service and Maintenance Tracker</p>
+          </div>
+          <div class="user-chip">
+            <div class="avatar">AM</div>
+            <span data-user-name>Alex Morgan</span>
+          </div>
+        </header>
+        <section class="grid grid-4">
+          <div class="card stat">
+            <div>
+              <span class="muted">Vehicles</span>
+              <strong>3</strong>
+            </div>
+            <div class="icon">🚙</div>
+          </div>
+          <div class="card stat">
+            <div>
+              <span class="muted">Upcoming Services</span>
+              <strong>2</strong>
+            </div>
+            <div class="icon">🗓️</div>
+          </div>
+          <div class="card stat">
+            <div>
+              <span class="muted">Open Reminders</span>
+              <strong>4</strong>
+            </div>
+            <div class="icon">🔔</div>
+          </div>
+          <div class="card stat">
+            <div>
+              <span class="muted">Total Records</span>
+              <strong>18</strong>
+            </div>
+            <div class="icon">🧾</div>
+          </div>
+        </section>
+        <div class="section-head">
+          <h2>Upcoming maintenance</h2>
+          <a class="btn btn-primary" href="maintenance.html"
+            >Schedule Service</a
+          >
+        </div>
+        <div class="card table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Vehicle</th>
+                <th>Service</th>
+                <th>Due</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Toyota Corolla</td>
+                <td>Engine oil change</td>
+                <td>28 Jul 2026</td>
+                <td><span class="badge warning">Due soon</span></td>
+              </tr>
+              <tr>
+                <td>Honda Civic</td>
+                <td>Brake inspection</td>
+                <td>14 Aug 2026</td>
+                <td><span class="badge info">Scheduled</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="section-head">
+          <h2>Vehicle health</h2>
+        </div>
+        <section class="grid grid-3">
+          <div class="card">
+            <strong>Toyota Corolla</strong>
+            <p class="muted">82,450 km</p>
+            <div class="progress">
+              <span style="width: 78%"></span>
+            </div>
+            <p class="muted">Maintenance score: 78%</p>
+          </div>
+          <div class="card">
+            <strong>Honda Civic</strong>
+            <p class="muted">56,120 km</p>
+            <div class="progress">
+              <span style="width: 91%"></span>
+            </div>
+            <p class="muted">Maintenance score: 91%</p>
+          </div>
+          <div class="card">
+            <strong>Suzuki Swift</strong>
+            <p class="muted">31,800 km</p>
+            <div class="progress">
+              <span style="width: 86%"></span>
+            </div>
+            <p class="muted">Maintenance score: 86%</p>
+          </div>
+        </section>
+        <div class="footer-note">
+          AutoTrack UI prototype • Static frontend demo
+        </div>
+      </main>
+    </div>
+    <script src="js/app.js"></script>
+  </body>
+</html>
