@@ -1,1 +1,175 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Profile | AutoTrack</title><link rel="stylesheet" href="css/style.css"></head><body data-page="profile"><div class="layout"><aside class="sidebar"><div class="brand"><div class="brand-badge">AT</div><div>AutoTrack</div></div><nav class="nav"><a data-page="dashboard" href="dashboard.html"><span>•</span>Dashboard</a><a data-page="vehicles" href="vehicles.html"><span>•</span>Vehicles</a><a data-page="service" href="service-history.html"><span>•</span>Service History</a><a data-page="maintenance" href="maintenance.html"><span>•</span>Maintenance</a><a data-page="appointments" href="appointments.html"><span>•</span>Appointments</a><a data-page="garages" href="garages.html"><span>•</span>Garages</a><a data-page="estimate" href="cost-estimator.html"><span>•</span>Cost Estimator</a><a data-page="alerts" href="notifications.html"><span>•</span>SMS Alerts</a><a data-page="news" href="news.html"><span>•</span>Automotive News</a><a data-page="chatbot" href="chatbot.html"><span>•</span>AI Assistant</a><a data-page="profile" href="profile.html"><span>•</span>Profile</a><a data-page="admin" href="admin.html"><span>•</span>Admin</a></nav></aside><main class="main"><div class="topbar"><div class="title"><h1>Profile</h1><p>Update customer details and the mobile number used for alerts.</p></div><div class="user-chip">Gobiha M. · <b>Vehicle Owner</b></div></div><div class="grid grid-2"><div class="card"><h2>Personal details</h2><form class="form-grid" onsubmit="event.preventDefault();demoToast('Demo: profile updated.')"><div class="field"><label>First name</label><input value="Gobiha"></div><div class="field"><label>Last name</label><input value="Mahenthiran"></div><div class="field full"><label>Email</label><input type="email" value="gobi@example.com"></div><div class="field full"><label>Mobile number</label><input type="tel" value="+94 77 123 4567"><span class="hint">Maintenance and appointment SMS alerts are sent to this number.</span></div><div class="field full"><button class="btn btn-primary">Save profile</button></div></form></div><div class="card"><h2>Communication preferences</h2><p><span class="switch on" data-toggle></span> SMS maintenance reminders</p><p><span class="switch on" data-toggle></span> SMS appointment updates</p><p><span class="switch" data-toggle></span> SMS automotive news</p><div class="alert"><b>Privacy note</b><br>Your phone number should only be used for the alerts the customer enables.</div></div></div></main></div><script src="js/app.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Profile</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+  </head>
+
+  <body data-page="profile">
+    <div class="app-shell">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-badge">A</div>
+          <span>AutoTrack</span>
+        </div>
+
+        <nav class="nav">
+          <a data-page="dashboard" href="dashboard.html">
+            🏠 <span>Dashboard</span>
+          </a>
+
+          <a data-page="vehicles" href="vehicles.html">
+            🚙 <span>Vehicles</span>
+          </a>
+
+          <a data-page="service" href="service-history.html">
+            🧾 <span>Service History</span>
+          </a>
+
+          <a data-page="maintenance" href="maintenance.html">
+            🗓️ <span>Maintenance</span>
+          </a>
+
+          <a data-page="reminders" href="reminders.html">
+            🔔 <span>Reminders</span>
+          </a>
+
+          <a data-page="chatbot" href="chatbot.html">
+            🤖 <span>AI Assistant</span>
+          </a>
+
+          <a data-page="garages" href="garages.html">
+            📍 <span>Garages</span>
+          </a>
+
+          <a data-page="news" href="news.html"> 📰 <span>News</span> </a>
+
+          <a data-page="profile" href="profile.html">
+            👤 <span>Profile</span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main">
+        <!-- Top Bar -->
+        <header class="topbar">
+          <div class="title">
+            <h1>Profile</h1>
+            <p>Automobile Service and Maintenance Tracker</p>
+          </div>
+
+          <div class="user-chip">
+            <div class="avatar">AM</div>
+            <span data-user-name>Alex Morgan</span>
+          </div>
+        </header>
+
+        <!-- Profile Section -->
+        <section class="grid grid-2">
+          <form
+            class="card form-grid"
+            onsubmit="
+              event.preventDefault();
+              alert('Profile updated.');
+            "
+          >
+            <div class="field full">
+              <label>Full Name</label>
+              <input type="text" value="Alex Morgan" />
+            </div>
+
+            <div class="field">
+              <label>Email</label>
+              <input type="email" value="alex@example.com" />
+            </div>
+
+            <div class="field">
+              <label>Phone</label>
+              <input type="text" value="+94 77 123 4567" />
+            </div>
+
+            <div class="field">
+              <label>Preferred Reminder Channel</label>
+
+              <select>
+                <option>Email and push notification</option>
+                <option>Email only</option>
+                <option>Push notification only</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Language</label>
+
+              <select>
+                <option>English</option>
+                <option>Sinhala</option>
+                <option>Tamil</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary full">
+              Save Changes
+            </button>
+          </form>
+
+          <!-- Account Settings -->
+          <div class="card">
+            <h2>Account Settings</h2>
+
+            <p>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-toast="Password reset link requested."
+              >
+                Change Password
+              </button>
+            </p>
+
+            <p>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-toast="Your data export is being prepared in demo mode."
+              >
+                Export My Data
+              </button>
+            </p>
+
+            <p>
+              <button
+                type="button"
+                class="btn btn-danger"
+                data-toast="Account deletion is disabled in this prototype."
+              >
+                Delete Account
+              </button>
+            </p>
+          </div>
+        </section>
+
+        <div class="footer-note">
+          AutoTrack UI prototype • Static frontend demo
+        </div>
+      </main>
+    </div>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
