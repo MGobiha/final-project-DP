@@ -104,7 +104,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     mysqli_stmt_bind_param(
         $stmt,
-        "ssssssssd sii",
+        "ssssssssdsii",
         $firstName,
         $lastName,
         $email,

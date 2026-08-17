@@ -13,10 +13,33 @@ $old = [
     "garage_phone" => "",
     "garage_address" => "",
     "garage_district" => "",
-    "garage_description" => ""
+    "garage_description" => "",
+    "registration_number" => "",
+    "vehicle_make" => "",
+    "vehicle_model" => "",
+    "vehicle_year" => "",
+    "current_mileage" => "",
+    "fuel_type" => ""
 ];
 
+$selectedGarageIds = [];
+
+$garageListSql = "
+    SELECT garage_id, garage_name, district, address
+    FROM garages
+    WHERE approval_status = 'approved'
+    AND active_status = 1
+    ORDER BY garage_name
+";
+
+$garageListResult = mysqli_query($conn, $garageListSql);
+
+if (!$garageListResult) {
+    die("Garage list query error: " . mysqli_error($conn));
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
     $accountType = trim($_POST["account_type"] ?? "");
     $firstName = trim($_POST["first_name"] ?? "");
     $lastName = trim($_POST["last_name"] ?? "");
@@ -35,6 +58,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $garageDistrict = trim($_POST["garage_district"] ?? "");
     $garageDescription = trim($_POST["garage_description"] ?? "");
 
+    $selectedGarageIds = $_POST["garage_ids"] ?? [];
+    if (!is_array($selectedGarageIds)) {
+        $selectedGarageIds = [];
+    }
+    $selectedGarageIds = array_values(array_unique(array_filter(
+        array_map("intval", $selectedGarageIds),
+        fn($id) => $id > 0
+    )));
+
+    $registrationNumber = trim($_POST["registration_number"] ?? "");
+    $vehicleMake = trim($_POST["vehicle_make"] ?? "");
+    $vehicleModel = trim($_POST["vehicle_model"] ?? "");
+    $vehicleYear = trim($_POST["vehicle_year"] ?? "");
+    $currentMileage = trim($_POST["current_mileage"] ?? "");
+    $fuelType = trim($_POST["fuel_type"] ?? "");
+
     $old = [
         "account_type" => $accountType,
         "first_name" => $firstName,
@@ -45,27 +84,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         "garage_phone" => $garagePhone,
         "garage_address" => $garageAddress,
         "garage_district" => $garageDistrict,
-        "garage_description" => $garageDescription
+        "garage_description" => $garageDescription,
+        "registration_number" => $registrationNumber,
+        "vehicle_make" => $vehicleMake,
+        "vehicle_model" => $vehicleModel,
+        "vehicle_year" => $vehicleYear,
+        "current_mileage" => $currentMileage,
+        "fuel_type" => $fuelType
     ];
 
     $allowedTypes = ["vehicle_owner", "garage_admin"];
     $allowedDistricts = ["Jaffna", "Kilinochchi", "Mullaitivu", "Mannar", "Vavuniya"];
+    $allowedFuelTypes = ["petrol", "diesel", "hybrid", "electric"];
 
     if (!in_array($accountType, $allowedTypes, true)) {
         $message = "Please select a valid account type.";
     } elseif ($firstName === "" || $lastName === "" || $email === "" || $mobileNumber === "" || $password === "" || $confirmPassword === "") {
-        $message = "Please fill in all required fields.";
+        $message = "Please fill in all required account fields.";
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $message = "Please enter a valid email address.";
     } elseif ($password !== $confirmPassword) {
         $message = "Passwords do not match.";
     } elseif (strlen($password) < 6) {
         $message = "Password must contain at least 6 characters.";
+    } elseif ($accountType === "vehicle_owner" && count($selectedGarageIds) === 0) {
+        $message = "Please select at least one garage.";
+    } elseif ($accountType === "vehicle_owner" && ($registrationNumber === "" || $vehicleMake === "" || $vehicleModel === "")) {
+        $message = "Please enter the required vehicle details.";
+    } elseif ($accountType === "vehicle_owner" && $vehicleYear !== "" && (!ctype_digit($vehicleYear) || (int)$vehicleYear < 1950 || (int)$vehicleYear > 2100)) {
+        $message = "Please enter a valid vehicle year.";
+    } elseif ($accountType === "vehicle_owner" && $currentMileage !== "" && (!is_numeric($currentMileage) || (float)$currentMileage < 0)) {
+        $message = "Please enter a valid current mileage.";
+    } elseif ($accountType === "vehicle_owner" && $fuelType !== "" && !in_array($fuelType, $allowedFuelTypes, true)) {
+        $message = "Please select a valid fuel type.";
     } elseif ($accountType === "garage_admin" && ($garageName === "" || $garagePhone === "" || $garageAddress === "" || $garageDistrict === "")) {
         $message = "Please complete all required garage information.";
     } elseif ($accountType === "garage_admin" && !in_array($garageDistrict, $allowedDistricts, true)) {
         $message = "Please select a valid Northern Province district.";
     } else {
+
         $checkSql = "SELECT user_id FROM users WHERE email = ? LIMIT 1";
         $checkStmt = mysqli_prepare($conn, $checkSql);
 
@@ -79,22 +136,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if (mysqli_num_rows($checkResult) > 0) {
                 $message = "An account already exists with this email address.";
             } else {
+
                 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
                 if ($accountType === "vehicle_owner") {
-                    $role = "vehicle_owner";
-                    $sql = "
-                        INSERT INTO users
-                        (first_name, last_name, email, mobile_number, password, maintenance_sms, appointment_sms, news_sms, role)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    ";
-                    $stmt = mysqli_prepare($conn, $sql);
 
-                    if (!$stmt) {
-                        $message = "Unable to prepare registration.";
-                    } else {
+                    mysqli_begin_transaction($conn);
+
+                    try {
+                        $role = "vehicle_owner";
+
+                        $userSql = "
+                            INSERT INTO users
+                            (first_name, last_name, email, mobile_number, password, maintenance_sms, appointment_sms, news_sms, role)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ";
+
+                        $userStmt = mysqli_prepare($conn, $userSql);
+
+                        if (!$userStmt) {
+                            throw new Exception("Unable to prepare vehicle owner account.");
+                        }
+
                         mysqli_stmt_bind_param(
-                            $stmt,
+                            $userStmt,
                             "sssssiiis",
                             $firstName,
                             $lastName,
@@ -107,26 +172,119 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             $role
                         );
 
-                        if (mysqli_stmt_execute($stmt)) {
-                            $_SESSION["success_message"] = "Registration successful. Please sign in.";
-                            header("Location: login.php");
-                            exit();
-                        } else {
-                            $message = "Registration failed: " . mysqli_stmt_error($stmt);
+                        if (!mysqli_stmt_execute($userStmt)) {
+                            throw new Exception("Unable to create vehicle owner account: " . mysqli_stmt_error($userStmt));
                         }
+
+                        $vehicleOwnerId = mysqli_insert_id($conn);
+
+                        $yearValue = $vehicleYear === "" ? null : (int)$vehicleYear;
+                        $mileageValue = $currentMileage === "" ? 0 : (float)$currentMileage;
+
+                        $vehicleSql = "
+                            INSERT INTO vehicles
+                            (user_id, registration_number, make, model, manufacture_year, current_mileage, fuel_type)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                        ";
+
+                        $vehicleStmt = mysqli_prepare($conn, $vehicleSql);
+
+                        if (!$vehicleStmt) {
+                            throw new Exception("Unable to prepare vehicle registration: " . mysqli_error($conn));
+                        }
+
+                        mysqli_stmt_bind_param(
+                            $vehicleStmt,
+                            "isssids",
+                            $vehicleOwnerId,
+                            $registrationNumber,
+                            $vehicleMake,
+                            $vehicleModel,
+                            $yearValue,
+                            $mileageValue,
+                            $fuelType
+                        );
+
+                        if (!mysqli_stmt_execute($vehicleStmt)) {
+                            throw new Exception("Unable to save vehicle details: " . mysqli_stmt_error($vehicleStmt));
+                        }
+
+                        $verifyGarageSql = "
+                            SELECT garage_id
+                            FROM garages
+                            WHERE garage_id = ?
+                            AND approval_status = 'approved'
+                            AND active_status = 1
+                            LIMIT 1
+                        ";
+
+                        $requestSql = "
+                            INSERT INTO garage_customer_requests
+                            (garage_id, vehicle_owner_id, request_status, requested_by)
+                            VALUES (?, ?, 'pending', 'vehicle_owner')
+                        ";
+
+                        foreach ($selectedGarageIds as $selectedGarageId) {
+
+                            $verifyGarageStmt = mysqli_prepare($conn, $verifyGarageSql);
+
+                            if (!$verifyGarageStmt) {
+                                throw new Exception("Unable to verify selected garage.");
+                            }
+
+                            mysqli_stmt_bind_param($verifyGarageStmt, "i", $selectedGarageId);
+                            mysqli_stmt_execute($verifyGarageStmt);
+                            $verifyGarageResult = mysqli_stmt_get_result($verifyGarageStmt);
+
+                            if (mysqli_num_rows($verifyGarageResult) !== 1) {
+                                throw new Exception("One of the selected garages is not available.");
+                            }
+
+                            $requestStmt = mysqli_prepare($conn, $requestSql);
+
+                            if (!$requestStmt) {
+                                throw new Exception("Unable to prepare garage request.");
+                            }
+
+                            mysqli_stmt_bind_param(
+                                $requestStmt,
+                                "ii",
+                                $selectedGarageId,
+                                $vehicleOwnerId
+                            );
+
+                            if (!mysqli_stmt_execute($requestStmt)) {
+                                throw new Exception("Unable to send garage request: " . mysqli_stmt_error($requestStmt));
+                            }
+                        }
+
+                        mysqli_commit($conn);
+
+                        $_SESSION["success_message"] =
+                            "Registration successful. Your garage request(s) were sent for approval. Please sign in.";
+
+                        header("Location: login.php");
+                        exit();
+
+                    } catch (Throwable $e) {
+                        mysqli_rollback($conn);
+                        $message = "Vehicle owner registration failed. " . $e->getMessage();
                     }
                 }
 
                 if ($accountType === "garage_admin") {
+
                     mysqli_begin_transaction($conn);
 
                     try {
                         $role = "garage_admin";
+
                         $userSql = "
                             INSERT INTO users
                             (first_name, last_name, email, mobile_number, password, maintenance_sms, appointment_sms, news_sms, role)
                             VALUES (?, ?, ?, ?, ?, 0, 0, 0, ?)
                         ";
+
                         $userStmt = mysqli_prepare($conn, $userSql);
 
                         if (!$userStmt) {
@@ -156,6 +314,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             (owner_user_id, garage_name, owner_name, email, mobile_number, address, district, description, approval_status, active_status)
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 1)
                         ";
+
                         $garageStmt = mysqli_prepare($conn, $garageSql);
 
                         if (!$garageStmt) {
@@ -180,9 +339,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         }
 
                         mysqli_commit($conn);
-                        $_SESSION["success_message"] = "Garage registration submitted successfully. Your garage is waiting for System Admin approval.";
+
+                        $_SESSION["success_message"] =
+                            "Garage registration submitted successfully. Your garage is waiting for System Admin approval.";
+
                         header("Location: login.php");
                         exit();
+
                     } catch (Throwable $e) {
                         mysqli_rollback($conn);
                         $message = "Garage registration failed. " . $e->getMessage();
@@ -192,7 +355,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 }
+
+$garageListResult = mysqli_query($conn, $garageListSql);
+
 ?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -209,35 +376,127 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         .register-page {
             min-height: 100vh;
             display: grid;
-            grid-template-columns: minmax(0, 1fr) minmax(500px, 0.78fr);
+            grid-template-columns: 38% 62%;
+            background: #ffffff;
         }
 
         .register-visual {
-            padding: 64px;
-            display: flex;
-            align-items: center;
-            background: radial-gradient(circle at top right, rgba(255,255,255,.16), transparent 35%), linear-gradient(145deg, #0f62fe, #0b3d91);
-            color: #fff;
+         position: sticky;
+    top: 0;
+
+    height: 100vh;
+
+    padding: 45px 48px;
+
+    display: flex;
+    align-items: center;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at top right,
+            rgba(255, 255, 255, .16),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            #0f62fe,
+            #0b3d91
+        );
+
+    color: #ffffff;
+
         }
 
-        .register-visual-inner { max-width: 560px; margin: 0 auto; }
-        .register-brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 44px; font-size: 22px; font-weight: 800; }
-        .register-brand-badge { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: #fff; color: #0f62fe; }
-        .register-visual h1 { margin: 0 0 18px; font-size: clamp(38px, 4vw, 58px); line-height: 1.06; letter-spacing: -1.5px; }
-        .register-visual p { margin: 0; color: rgba(255,255,255,.86); font-size: 17px; line-height: 1.8; }
-        .register-features { margin-top: 34px; display: grid; gap: 13px; }
-        .register-feature { display: flex; gap: 10px; align-items: flex-start; color: rgba(255,255,255,.92); }
+        .register-visual-inner {
+            width: 100%;
+            max-width: 470px;
+            margin: 0 auto; 
+        }
+        .register-brand { 
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 35px;
+            font-size: 21px;
+            font-weight: 800; 
+        }
+        .register-brand-badge {
+                width: 42px;
+                height: 42px;
+                display: grid;
+                place-items: center;
+                border-radius: 12px;
+                background: #ffffff;
+                color: #0f62fe;
+                font-weight: 800;
+        }
+        /* Main heading */
 
-        .register-panel {
-            padding: 34px 34px;
+        .register-visual h1 {
+                margin: 0 0 18px;
+                font-size: clamp(34px, 3.2vw, 50px);
+                line-height: 1.08;
+                letter-spacing: -1.2px;
+        }
+        .register-visual p {
+            margin: 0;
+
+            color: rgba(
+                255,
+                255,
+                255,
+                .86
+            );
+
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .register-features {
+                margin-top: 28px;
+
+                display: grid;
+
+                gap: 12px;
+            }
+        .register-feature {
+                display: flex;
+
+                gap: 10px;
+
+                align-items: flex-start;
+
+                color: rgba(
+                    255,
+                    255,
+                    255,
+                    .92
+                );
+
+                font-size: 14px;
+
+                line-height: 1.5;
+            }
+       .register-panel {
+            min-width: 0;
+
+            padding: 35px 45px 50px;
+
             display: flex;
+
             justify-content: center;
             align-items: flex-start;
-            overflow-y: auto;
-            background: #fff;
+
+            background: #ffffff;
         }
 
-        .register-card { width: 100%; max-width: 650px; }
+        .register-card {
+            width: 100%;
+
+            /* Form can now use more space */
+            max-width: 760px;
+        }
         .register-card-head { margin-bottom: 22px; }
         .register-card-head h2 { margin: 0 0 8px; font-size: 29px; }
         .register-card-head p { margin: 0; color: #667085; }
@@ -272,9 +531,79 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         @media (max-width: 620px) {
-            .form-grid-2, .garage-fields-grid { grid-template-columns: 1fr; }
+            .form-grid-2, .garage-fields-grid, .vehicle-fields-grid, .garage-select-grid { grid-template-columns: 1fr; }
             .register-panel { padding: 24px 16px; }
         }
+
+        .conditional-section { grid-column: 1 / -1; padding: 17px; border: 1px solid #dce6f3; border-radius: 14px; background: #f8fbff; }
+        .conditional-section h3 { margin: 0 0 5px; font-size: 18px; }
+        .section-description { margin: 0 0 15px; color: #667085; font-size: 13px; line-height: 1.5; }
+        .vehicle-fields-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 17px 18px; }
+        .garage-select-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+        .garage-select-option { display: flex; align-items: flex-start; gap: 10px; padding: 13px; border: 1px solid #d8e0ea; border-radius: 11px; background: #fff; cursor: pointer; }
+        .garage-select-option:hover { border-color: #0f62fe; background: #f8fbff; }
+        .garage-select-option input { width: auto; margin-top: 3px; }
+        .garage-select-option strong { display: block; font-size: 14px; color: #172033; }
+        .garage-select-option small { display: block; margin-top: 4px; color: #667085; font-size: 12px; line-height: 1.4; }
+
+        /* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 1050px) {
+
+    .register-page {
+        grid-template-columns: 42% 58%;
+    }
+
+    .register-visual {
+        padding: 40px 30px;
+    }
+
+    .register-panel {
+        padding: 35px 30px;
+    }
+
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 800px) {
+
+    .register-page {
+        display: block;
+    }
+
+    .register-visual {
+        position: relative;
+
+        height: auto;
+        min-height: auto;
+
+        padding: 40px 25px;
+    }
+
+    .register-visual-inner {
+        max-width: 650px;
+    }
+
+    .register-visual h1 {
+        font-size: 36px;
+    }
+
+    .register-panel {
+        padding: 30px 20px;
+    }
+
+    .register-card {
+        max-width: 650px;
+    }
+
+}
+
     </style>
 </head>
 <body>
@@ -333,6 +662,123 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <label for="mobileNumber">Mobile Number</label>
                         <input type="tel" name="mobile_number" id="mobileNumber" value="<?= htmlspecialchars($old["mobile_number"]) ?>" placeholder="+94771234567" required>
                         <small>Used for account and customer communication.</small>
+                    </div>
+
+
+                    <div id="vehicleOwnerGarageFields" class="conditional-section">
+                        <h3>Select Garage(s)</h3>
+                        <p class="section-description">
+                            Choose one or more approved garages. Your request will be sent to each garage administrator for approval.
+                        </p>
+
+                        <div class="garage-select-grid">
+                            <?php if (mysqli_num_rows($garageListResult) > 0): ?>
+                                <?php while ($garageItem = mysqli_fetch_assoc($garageListResult)): ?>
+                                    <?php
+                                    $garageItemId = (int)$garageItem["garage_id"];
+                                    $isSelected = in_array($garageItemId, $selectedGarageIds, true);
+                                    ?>
+                                    <label class="garage-select-option">
+                                        <input
+                                            type="checkbox"
+                                            name="garage_ids[]"
+                                            value="<?= $garageItemId ?>"
+                                            <?= $isSelected ? "checked" : "" ?>
+                                        >
+                                        <span>
+                                            <strong><?= htmlspecialchars($garageItem["garage_name"]) ?></strong>
+                                            <small>
+                                                <?= htmlspecialchars($garageItem["district"] ?? "") ?>
+                                                <?php if (!empty($garageItem["address"])): ?>
+                                                    <br><?= htmlspecialchars($garageItem["address"]) ?>
+                                                <?php endif; ?>
+                                            </small>
+                                        </span>
+                                    </label>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <p class="muted">No approved garages are currently available.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <div id="vehicleDetailsSection" class="conditional-section">
+                        <h3>Vehicle Details</h3>
+                        <p class="section-description">
+                            Register your first vehicle. You can add more vehicles later from your dashboard.
+                        </p>
+
+                        <div class="vehicle-fields-grid">
+                            <div class="field">
+                                <label for="registrationNumber">Registration Number *</label>
+                                <input
+                                    type="text"
+                                    name="registration_number"
+                                    id="registrationNumber"
+                                    value="<?= htmlspecialchars($old["registration_number"]) ?>"
+                                    placeholder="Example: WP CAB-1234"
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="vehicleMake">Make *</label>
+                                <input
+                                    type="text"
+                                    name="vehicle_make"
+                                    id="vehicleMake"
+                                    value="<?= htmlspecialchars($old["vehicle_make"]) ?>"
+                                    placeholder="Toyota"
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="vehicleModel">Model *</label>
+                                <input
+                                    type="text"
+                                    name="vehicle_model"
+                                    id="vehicleModel"
+                                    value="<?= htmlspecialchars($old["vehicle_model"]) ?>"
+                                    placeholder="Corolla"
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="vehicleYear">Year</label>
+                                <input
+                                    type="number"
+                                    name="vehicle_year"
+                                    id="vehicleYear"
+                                    min="1950"
+                                    max="2100"
+                                    value="<?= htmlspecialchars($old["vehicle_year"]) ?>"
+                                    placeholder="2020"
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="currentMileage">Current Mileage (km)</label>
+                                <input
+                                    type="number"
+                                    name="current_mileage"
+                                    id="currentMileage"
+                                    min="0"
+                                    step="1"
+                                    value="<?= htmlspecialchars($old["current_mileage"]) ?>"
+                                    placeholder="45000"
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="fuelType">Fuel Type</label>
+                                <select name="fuel_type" id="fuelType">
+                                    <option value="">Select fuel type</option>
+                                    <option value="petrol" <?= $old["fuel_type"] === "petrol" ? "selected" : "" ?>>Petrol</option>
+                                    <option value="diesel" <?= $old["fuel_type"] === "diesel" ? "selected" : "" ?>>Diesel</option>
+                                    <option value="hybrid" <?= $old["fuel_type"] === "hybrid" ? "selected" : "" ?>>Hybrid</option>
+                                    <option value="electric" <?= $old["fuel_type"] === "electric" ? "selected" : "" ?>>Electric</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="garageFields" class="garage-fields">
@@ -402,22 +848,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
+
     const accountType = document.getElementById("accountType");
+
     const garageFields = document.getElementById("garageFields");
     const ownerSmsFields = document.getElementById("ownerSmsFields");
+    const vehicleOwnerGarageFields = document.getElementById("vehicleOwnerGarageFields");
+    const vehicleDetailsSection = document.getElementById("vehicleDetailsSection");
+
     const garageName = document.getElementById("garageName");
     const garagePhone = document.getElementById("garagePhone");
     const garageAddress = document.getElementById("garageAddress");
     const garageDistrict = document.getElementById("garageDistrict");
 
+    const registrationNumber = document.getElementById("registrationNumber");
+    const vehicleMake = document.getElementById("vehicleMake");
+    const vehicleModel = document.getElementById("vehicleModel");
+
     function updateRegistrationForm() {
+
         const isGarageAdmin = accountType.value === "garage_admin";
+        const isVehicleOwner = accountType.value === "vehicle_owner";
+
         garageFields.style.display = isGarageAdmin ? "block" : "none";
-        ownerSmsFields.style.display = isGarageAdmin ? "none" : "grid";
         garageName.required = isGarageAdmin;
         garagePhone.required = isGarageAdmin;
         garageAddress.required = isGarageAdmin;
         garageDistrict.required = isGarageAdmin;
+
+        vehicleOwnerGarageFields.style.display = isVehicleOwner ? "block" : "none";
+        vehicleDetailsSection.style.display = isVehicleOwner ? "block" : "none";
+        ownerSmsFields.style.display = isVehicleOwner ? "grid" : "none";
+
+        registrationNumber.required = isVehicleOwner;
+        vehicleMake.required = isVehicleOwner;
+        vehicleModel.required = isVehicleOwner;
     }
 
     accountType.addEventListener("change", updateRegistrationForm);

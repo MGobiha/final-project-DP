@@ -72,12 +72,12 @@ a {
   background: var(--ga-sidebar-hover);
   color: #fff;
 }
-
+/* 
 .main {
-  margin-left: 260px;
+  margin-left: 260px; 
   width: calc(100% - 260px);
   padding: 30px;
-}
+} */
 
 .topbar {
   display: flex;
@@ -191,7 +191,7 @@ a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
+  min-height: 40px;
   padding: 0 16px;
   border: 0;
   border-radius: 9px;
@@ -333,11 +333,11 @@ a {
     display: block;
   }
 
-  .main {
+  /* .main {
     margin-left: 0;
     width: 100%;
     padding: 20px;
-  }
+  } */
 
   .nav {
     flex-direction: row;

@@ -12,12 +12,88 @@ require_once 'config/database.php';
 // CHECK LOGIN
 // =====================================================
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+if (
+    !isset($_SESSION["user_id"])
+    ||
+    !isset($_SESSION["role"])
+) {
+
+    header(
+        "Location: login.php"
+    );
+
     exit();
 }
 
-$userId = (int) $_SESSION['user_id'];
+
+// =====================================================
+// CHECK ROLE
+// THIS DASHBOARD IS ONLY FOR VEHICLE OWNERS
+// =====================================================
+
+if (
+    $_SESSION["role"]
+    !== "vehicle_owner"
+) {
+
+    switch (
+        $_SESSION["role"]
+    ) {
+
+
+        // SYSTEM ADMIN
+
+        case "system_admin":
+
+            header(
+                "Location: admin/dashboard.php"
+            );
+
+            exit();
+
+
+        // GARAGE ADMIN
+
+        case "garage_admin":
+
+            header(
+                "Location: garage/dashboard.php"
+            );
+
+            exit();
+
+
+        // GARAGE STAFF
+
+        case "garage_staff":
+
+        header(
+            "Location: garage/staff/dashboard.php"
+        );
+
+        exit();
+
+
+        // INVALID ROLE
+
+        default:
+
+            header(
+                "Location: logout.php"
+            );
+
+            exit();
+    }
+}
+
+
+// =====================================================
+// VEHICLE OWNER USER ID
+// =====================================================
+
+$userId =
+    (int)
+    $_SESSION["user_id"];
 
 
 // =====================================================
@@ -60,7 +136,53 @@ if (!$user) {
     exit();
 }
 
+if (
+    $user["role"] !== "vehicle_owner"
+) {
 
+    $_SESSION["role"] =
+        $user["role"];
+
+    switch (
+        $user["role"]
+    ) {
+
+        case "system_admin":
+
+            header(
+                "Location: admin/dashboard.php"
+            );
+
+            exit();
+
+
+        case "garage_admin":
+
+            header(
+                "Location: garage/dashboard.php"
+            );
+
+            exit();
+
+
+        case "garage_staff":
+
+            header(
+                "Location: garage/staff/dashboard.php"
+            );
+
+            exit();
+
+
+        default:
+
+            header(
+                "Location: logout.php"
+            );
+
+            exit();
+    }
+}
 // =====================================================
 // VEHICLE COUNT
 // =====================================================
@@ -351,28 +473,71 @@ $upcomingMaintenance =
           <span>AutoTrack</span>
         </div>
         <nav class="nav">
-          <a data-page="dashboard" href="dashboard.html"
-            >🏠 <span>Dashboard</span></a
-          >
-          <a data-page="vehicles" href="vehicles.html"
-            >🚙 <span>Vehicles</span></a
-          >
-          <a data-page="service" href="service-history.html"
-            >🧾 <span>Service History</span></a
-          >
-          <a data-page="maintenance" href="maintenance.html"
-            >🗓️ <span>Maintenance</span></a
-          >
-          <a data-page="reminders" href="reminders.html"
-            >🔔 <span>Reminders</span></a
-          >
-          <a data-page="chatbot" href="chatbot.html"
-            >🤖 <span>AI Assistant</span></a
-          >
-          <a data-page="garages" href="garages.html">📍 <span>Garages</span></a>
-          <a data-page="news" href="news.html">📰 <span>News</span></a>
-          <a data-page="profile" href="profile.html">👤 <span>Profile</span></a>
-        </nav>
+
+    <a
+        data-page="dashboard"
+        href="dashboard.php"
+    >
+        🏠 <span>Dashboard</span>
+    </a>
+
+    <a
+        data-page="vehicles"
+        href="vehicles.php"
+    >
+        🚙 <span>Vehicles</span>
+    </a>
+
+    <a
+        data-page="service"
+        href="service-history.php"
+    >
+        🧾 <span>Service History</span>
+    </a>
+
+    <a
+        data-page="maintenance"
+        href="maintenance.php"
+    >
+        🗓️ <span>Maintenance</span>
+    </a>
+
+    <a
+        data-page="reminders"
+        href="reminders.php"
+    >
+        🔔 <span>Reminders</span>
+    </a>
+
+    <a
+        data-page="chatbot"
+        href="chatbot.php"
+    >
+        🤖 <span>AI Assistant</span>
+    </a>
+
+    <a
+        data-page="garages"
+        href="garages.php"
+    >
+        📍 <span>Garages</span>
+    </a>
+
+    <a
+        data-page="news"
+        href="news.php"
+    >
+        📰 <span>News</span>
+    </a>
+
+    <a
+        data-page="profile"
+        href="profile.php"
+    >
+        👤 <span>Profile</span>
+    </a>
+
+</nav>
       </aside>
       <main class="main">
         <header class="topbar">
@@ -454,7 +619,7 @@ $upcomingMaintenance =
           <div class="card stat">
             <div>
               <span class="muted">Open Reminders</span>
-              <strong>4</strong>
+              <strong><?php echo $totalReminders; ?></strong>
             </div>
             <div class="icon">🔔</div>
           </div>
@@ -473,7 +638,7 @@ $upcomingMaintenance =
         </section>
         <div class="section-head">
           <h2>Upcoming maintenance</h2>
-          <a class="btn btn-primary" href="maintenance.html"
+          <a class="btn btn-primary" href="maintenance.php"
             >Schedule Service</a
           >
         </div>
