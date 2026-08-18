@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once 'config/database.php';
+require_once 'includes/maintenance-functions.php';
+
 
 $message = "";
 $old = [
@@ -95,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $allowedTypes = ["vehicle_owner", "garage_admin"];
     $allowedDistricts = ["Jaffna", "Kilinochchi", "Mullaitivu", "Mannar", "Vavuniya"];
-    $allowedFuelTypes = ["petrol", "diesel", "hybrid", "electric"];
+    $allowedFuelTypes = ["Petrol", "Diesel", "Hybrid", "Electric"];
 
     if (!in_array($accountType, $allowedTypes, true)) {
         $message = "Please select a valid account type.";
@@ -179,7 +181,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         $vehicleOwnerId = mysqli_insert_id($conn);
 
                         $yearValue = $vehicleYear === "" ? null : (int)$vehicleYear;
-                        $mileageValue = $currentMileage === "" ? 0 : (float)$currentMileage;
+                        $mileageValue = $currentMileage === "" ? 0 : (int)$currentMileage;
 
                         $vehicleSql = "
                             INSERT INTO vehicles
@@ -195,7 +197,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                         mysqli_stmt_bind_param(
                             $vehicleStmt,
-                            "isssids",
+                            "isssiis",
                             $vehicleOwnerId,
                             $registrationNumber,
                             $vehicleMake,
@@ -312,7 +314,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         $garageSql = "
                             INSERT INTO garages
                             (owner_user_id, garage_name, owner_name, email, mobile_number, address, district, description, approval_status, active_status)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 1)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', 0)
                         ";
 
                         $garageStmt = mysqli_prepare($conn, $garageSql);
@@ -772,10 +774,10 @@ $garageListResult = mysqli_query($conn, $garageListSql);
                                 <label for="fuelType">Fuel Type</label>
                                 <select name="fuel_type" id="fuelType">
                                     <option value="">Select fuel type</option>
-                                    <option value="petrol" <?= $old["fuel_type"] === "petrol" ? "selected" : "" ?>>Petrol</option>
-                                    <option value="diesel" <?= $old["fuel_type"] === "diesel" ? "selected" : "" ?>>Diesel</option>
-                                    <option value="hybrid" <?= $old["fuel_type"] === "hybrid" ? "selected" : "" ?>>Hybrid</option>
-                                    <option value="electric" <?= $old["fuel_type"] === "electric" ? "selected" : "" ?>>Electric</option>
+                                    <option value="Petrol" <?= $old["fuel_type"] === "Petrol" ? "selected" : "" ?>>Petrol</option>
+                                    <option value="Diesel" <?= $old["fuel_type"] === "Diesel" ? "selected" : "" ?>>Diesel</option>
+                                    <option value="Hybrid" <?= $old["fuel_type"] === "Hybrid" ? "selected" : "" ?>>Hybrid</option>
+                                    <option value="Electric" <?= $old["fuel_type"] === "Electric" ? "selected" : "" ?>>Electric</option>
                                 </select>
                             </div>
                         </div>
