@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 session_start();
 
 require_once 'config/database.php';
-
+require_once 'includes/reminder-checker.php';
 
 // =====================================================
 // CHECK LOGIN
@@ -90,12 +90,16 @@ if (
 // =====================================================
 // VEHICLE OWNER USER ID
 // =====================================================
-
+// after role check
 $userId =
     (int)
     $_SESSION["user_id"];
 
-
+// Run automatic reminder check
+checkAutomaticReminders(
+    $conn,
+    $userId
+);
 // =====================================================
 // LOAD LOGGED-IN USER
 // =====================================================

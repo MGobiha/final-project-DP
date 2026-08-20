@@ -211,6 +211,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             throw new Exception("Unable to save vehicle details: " . mysqli_stmt_error($vehicleStmt));
                         }
 
+                        $vehicleId = mysqli_insert_id($conn);
+                            generateVehicleReminders(
+                                $conn,
+                                $vehicleId,
+                                $vehicleOwnerId
+                            );
+
                         $verifyGarageSql = "
                             SELECT garage_id
                             FROM garages
