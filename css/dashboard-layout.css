@@ -1,0 +1,916 @@
+/* =========================================================
+   AUTOTRACK
+   COMMON DASHBOARD LAYOUT
+
+   Used by:
+   - Vehicle Owner Dashboard
+   - Garage Admin Dashboard
+   - Staff Management
+   - Customer Requests
+   - Customers
+   - Appointments
+   - Services
+   - Parts
+   - Service Records
+   - Profile
+   ========================================================= */
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+:root {
+  --dashboard-primary: #146cff;
+  --dashboard-primary-dark: #0b55d4;
+
+  --dashboard-sidebar: #0f1a30;
+  --dashboard-sidebar-hover: #18263d;
+  --dashboard-sidebar-active: #1e2d45;
+
+  --dashboard-bg: #f4f7fb;
+
+  --dashboard-surface: #ffffff;
+
+  --dashboard-text: #101828;
+  --dashboard-muted: #667085;
+
+  --dashboard-border: #e4e9f0;
+
+  --dashboard-danger: #dc2626;
+  --dashboard-success: #16a34a;
+  --dashboard-warning: #f59e0b;
+
+  --sidebar-width: 310px;
+
+  --content-padding-x: 32px;
+  --content-padding-y: 36px;
+
+  --dashboard-radius: 18px;
+
+  --dashboard-shadow: 0 10px 30px rgba(16, 24, 40, 0.05);
+}
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: "Inter", Arial, sans-serif;
+  background: var(--dashboard-bg);
+  color: var(--dashboard-text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* =========================================================
+   APPLICATION WRAPPER
+   ========================================================= */
+
+.app-shell {
+  display: flex !important;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--dashboard-bg);
+}
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.app-shell > .sidebar {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width) !important;
+  min-width: var(--sidebar-width) !important;
+  height: 100vh;
+  padding: 28px 22px;
+  background: var(--dashboard-sidebar);
+  color: #ffffff;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+/* =========================================================
+   SIDEBAR SCROLLBAR
+   ========================================================= */
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+}
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.sidebar .brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 50px;
+  margin-bottom: 30px;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.sidebar .brand-badge {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  background: linear-gradient(135deg, #1576ff, #1cc58c);
+  color: #ffffff;
+  font-size: 21px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+   ========================================================= */
+
+.sidebar .nav {
+  display: flex !important;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+}
+
+.sidebar .nav a {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 11px;
+  color: #d5deeb;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sidebar .nav a:hover {
+  background: var(--dashboard-sidebar-hover);
+  color: #ffffff;
+}
+
+.sidebar .nav a.active {
+  background: var(--dashboard-sidebar-active);
+  color: #ffffff;
+}
+
+/* =========================================================
+   MAIN CONTENT
+
+   IMPORTANT:
+   Every dashboard receives exactly the same
+   width, left margin and padding.
+   ========================================================= */
+
+.app-shell > .main {
+  width: calc(100% - var(--sidebar-width)) !important;
+  max-width: none !important;
+  min-height: 100vh;
+  margin-left: var(--sidebar-width) !important;
+  padding: var(--content-padding-y) var(--content-padding-x) 60px !important;
+  background: var(--dashboard-bg);
+}
+
+/* =========================================================
+   OPTIONAL PAGE CONTENT WIDTH
+
+   Use:
+   <div class="dashboard-container">
+   ========================================================= */
+
+.dashboard-container {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar {
+  width: 100%;
+  min-height: 72px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.topbar .title h1,
+.topbar h1 {
+  margin: 0 0 6px;
+  font-size: 32px;
+  line-height: 1.2;
+  color: var(--dashboard-text);
+}
+
+.topbar .title p,
+.topbar p {
+  margin: 0;
+  color: var(--dashboard-muted);
+  font-size: 16px;
+}
+
+/* =========================================================
+   USER CHIP
+   ========================================================= */
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: var(--dashboard-surface);
+  border: 1px solid var(--dashboard-border);
+  box-shadow: var(--dashboard-shadow);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--dashboard-primary);
+  color: #ffffff;
+  font-weight: 800;
+}
+
+/* =========================================================
+   STANDARD PAGE HEADER
+
+   Staff, Customers, Requests, Services etc.
+   ========================================================= */
+
+.page-header,
+.staff-page-header,
+.garage-dashboard-header,
+.request-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 28px;
+}
+
+.page-header h1,
+.staff-page-header h1,
+.garage-dashboard-header h1,
+.request-header h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+  color: var(--dashboard-text);
+}
+
+.page-header p,
+.staff-page-header p,
+.garage-dashboard-header p,
+.request-header p {
+  margin: 0;
+  color: var(--dashboard-muted);
+}
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+  background: var(--dashboard-surface);
+  border: 1px solid var(--dashboard-border);
+  border-radius: var(--dashboard-radius);
+  padding: 20px;
+  box-shadow: var(--dashboard-shadow);
+}
+
+/* =========================================================
+   STAT CARD
+   ========================================================= */
+
+.card.stat {
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 24px;
+}
+
+.card.stat .muted,
+.card.stat p {
+  margin: 0;
+  color: var(--dashboard-muted);
+  font-size: 16px;
+}
+
+.card.stat strong,
+.card.stat h2 {
+  display: block;
+  margin: 10px 0 0;
+  font-size: 28px;
+  line-height: 1.1;
+  color: var(--dashboard-text);
+}
+
+.card.stat .icon {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: #edf4ff;
+  font-size: 24px;
+}
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.section-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 34px 0 18px;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-size: 23px;
+  color: var(--dashboard-text);
+}
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--dashboard-primary);
+  color: #ffffff;
+  box-shadow: 0 7px 18px rgba(20, 108, 255, 0.2);
+}
+
+.btn-primary:hover {
+  background: var(--dashboard-primary-dark);
+}
+
+.btn-secondary {
+  background: #edf2f7;
+  color: #101828;
+}
+
+.btn-secondary:hover {
+  background: #e3e9f0;
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  padding: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 15px 14px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--dashboard-border);
+}
+
+.table th {
+  background: #f8fafc;
+  color: #475467;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.table td {
+  color: #101828;
+  font-size: 14px;
+}
+
+.table tbody tr:hover {
+  background: #fafcff;
+}
+
+/* =========================================================
+   ACTION BUTTON GROUP
+   ========================================================= */
+
+.action-group,
+.request-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* =========================================================
+   BADGES
+   ========================================================= */
+
+.badge,
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge.success,
+.status-active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge.warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge.info {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge.danger,
+.status-resigned {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status-inactive {
+  background: #f2f4f7;
+  color: #475467;
+}
+
+/* =========================================================
+   MUTED
+   ========================================================= */
+
+.muted {
+  color: var(--dashboard-muted);
+}
+
+/* =========================================================
+   EMPTY TABLE
+   ========================================================= */
+
+.empty-row {
+  padding: 30px !important;
+  text-align: center !important;
+  color: var(--dashboard-muted) !important;
+}
+
+/* =========================================================
+   QUICK ACCESS CARDS
+   ========================================================= */
+
+.dashboard-section {
+  margin-top: 32px;
+}
+
+.dashboard-section > h2 {
+  margin: 0 0 18px;
+  font-size: 23px;
+}
+
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.quick-link-card {
+  display: block;
+  padding: 22px;
+  background: var(--dashboard-surface);
+  border: 1px solid var(--dashboard-border);
+  border-radius: var(--dashboard-radius);
+  color: var(--dashboard-text);
+  box-shadow: var(--dashboard-shadow);
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.quick-link-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(20, 108, 255, 0.3);
+  box-shadow: 0 14px 32px rgba(16, 24, 40, 0.08);
+}
+
+.quick-link-card .quick-icon {
+  margin-bottom: 12px;
+  font-size: 28px;
+}
+
+.quick-link-card h3 {
+  margin: 0 0 7px;
+  font-size: 18px;
+}
+
+.quick-link-card p {
+  margin: 0;
+  color: var(--dashboard-muted);
+  line-height: 1.6;
+}
+
+/* =========================================================
+   FORMS INSIDE DASHBOARD
+   ========================================================= */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field label {
+  color: #344054;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #d0d5dd;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #101828;
+  outline: none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--dashboard-primary);
+  box-shadow: 0 0 0 3px rgba(20, 108, 255, 0.1);
+}
+
+.field textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+/* =========================================================
+   ALERTS
+   ========================================================= */
+
+.alert {
+  padding: 12px 15px;
+  margin-bottom: 18px;
+  border-radius: 10px;
+}
+
+.alert-success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.alert-danger {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+
+.progress {
+  width: 100%;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--dashboard-primary);
+}
+
+/* =========================================================
+   LARGE SCREEN
+   ========================================================= */
+
+@media (min-width: 1800px) {
+  .app-shell > .main {
+    padding-left: 42px !important;
+    padding-right: 42px !important;
+  }
+}
+
+/* =========================================================
+   LAPTOP
+   ========================================================= */
+
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-width: 270px;
+    --content-padding-x: 26px;
+    --content-padding-y: 30px;
+  }
+
+  .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .quick-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+  :root {
+    --sidebar-width: 90px;
+    --content-padding-x: 22px;
+  }
+
+  .sidebar {
+    padding: 22px 12px !important;
+  }
+
+  .sidebar .brand {
+    justify-content: center;
+  }
+
+  .sidebar .brand > span:not(.brand-badge) {
+    display: none;
+  }
+
+  .sidebar .nav a {
+    justify-content: center;
+
+    padding: 13px 10px;
+  }
+
+  .sidebar .nav a span {
+    display: none;
+  }
+
+  .topbar {
+    align-items: flex-start;
+  }
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  :root {
+    --content-padding-x: 16px;
+    --content-padding-y: 20px;
+  }
+
+  .app-shell {
+    display: block !important;
+  }
+
+  .app-shell > .sidebar {
+    position: relative !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto;
+    padding: 14px 16px !important;
+  }
+
+  .sidebar .brand {
+    justify-content: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .sidebar .brand > span:not(.brand-badge) {
+    display: inline;
+  }
+
+  .sidebar .nav {
+    flex-direction: row !important;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .sidebar .nav a {
+    width: auto;
+    min-width: max-content;
+    justify-content: flex-start;
+  }
+
+  .sidebar .nav a span {
+    display: inline;
+  }
+
+  .app-shell > .main {
+    width: 100% !important;
+    margin-left: 0 !important;
+    padding: var(--content-padding-y) var(--content-padding-x) 40px !important;
+  }
+
+  .grid-4,
+  .grid-3,
+  .grid-2,
+  .form-grid,
+  .quick-links {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar,
+  .page-header,
+  .staff-page-header,
+  .garage-dashboard-header,
+  .request-header,
+  .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-chip {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .card.stat {
+    min-height: 125px;
+  }
+}
+/* =========================================================
+   GARAGE SIDEBAR BRAND
+   ========================================================= */
+
+.garage-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.garage-sidebar-logo {
+  width: 52px;
+  height: 52px;
+  min-width: 52px;
+  border-radius: 14px;
+  object-fit: cover;
+  background: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.garage-brand-text {
+  min-width: 0;
+}
+
+.garage-brand-text strong {
+  display: block;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 185px;
+}
+
+.garage-brand-text small {
+  display: block;
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 12px;
+}

@@ -1,0 +1,605 @@
+/* =========================================================
+   GARAGE ADMIN - GLOBAL CSS
+========================================================= */
+
+:root {
+  --ga-primary: #2563eb;
+  --ga-primary-dark: #1d4ed8;
+
+  --ga-sidebar: #0f1b32;
+  --ga-sidebar-hover: #172944;
+  --ga-sidebar-active: #1d304d;
+
+  --ga-bg: #f4f7fb;
+  --ga-card: #ffffff;
+
+  --ga-text: #101828;
+  --ga-muted: #667085;
+
+  --ga-border: #e2e8f0;
+
+  --ga-success: #16a34a;
+  --ga-warning: #d97706;
+  --ga-danger: #dc2626;
+
+  --ga-sidebar-width: 345px;
+}
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Inter", Arial, sans-serif;
+  background: var(--ga-bg);
+  color: var(--ga-text);
+}
+
+a {
+  text-decoration: none;
+}
+
+/* =========================================================
+   GARAGE SIDEBAR
+========================================================= */
+
+.garage-sidebar {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  width: var(--ga-sidebar-width);
+  height: 100vh;
+
+  padding: 28px 26px;
+
+  background: var(--ga-sidebar);
+
+  color: #ffffff;
+
+  overflow-y: auto;
+
+  z-index: 1000;
+
+  scrollbar-width: thin;
+}
+
+/* =========================================================
+   GARAGE BRAND
+========================================================= */
+
+.garage-brand {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  margin-bottom: 28px;
+}
+
+.garage-brand-badge {
+  width: 54px;
+  height: 54px;
+
+  flex: 0 0 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: linear-gradient(135deg, #1487f8, #16c7a3);
+
+  color: #ffffff;
+
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.garage-brand-text {
+  min-width: 0;
+}
+
+.garage-brand-text strong {
+  display: block;
+
+  color: #ffffff;
+
+  font-size: 21px;
+  font-weight: 800;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.garage-brand-text span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #9dafc8;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   GARAGE NAVIGATION
+========================================================= */
+
+.garage-nav {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.garage-nav a {
+  width: 100%;
+  min-height: 58px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 15px;
+
+  padding: 14px 18px;
+
+  border-radius: 12px;
+
+  color: #f8fafc;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.garage-nav a:hover {
+  background: var(--ga-sidebar-hover);
+  color: #ffffff;
+}
+
+.garage-nav a.active {
+  background: var(--ga-sidebar-active);
+  color: #ffffff;
+}
+
+.garage-nav .nav-icon {
+  width: 24px;
+
+  flex: 0 0 24px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 17px;
+}
+
+.garage-logout {
+  margin-top: 8px;
+}
+
+/* =========================================================
+   GARAGE MAIN CONTENT
+========================================================= */
+
+.garage-main {
+  margin-left: var(--ga-sidebar-width);
+
+  width: calc(100% - var(--ga-sidebar-width));
+
+  min-height: 100vh;
+
+  padding: 38px 36px 50px;
+
+  background: var(--ga-bg);
+}
+
+/* =========================================================
+   COMMON CARDS
+========================================================= */
+
+.card {
+  background: #ffffff;
+
+  border: 1px solid var(--ga-border);
+
+  border-radius: 16px;
+
+  padding: 22px;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 14px 12px;
+
+  text-align: left;
+
+  border-bottom: 1px solid var(--ga-border);
+}
+
+.table th {
+  background: #f8fafc;
+
+  color: #475569;
+
+  font-size: 14px;
+}
+
+.table td {
+  font-size: 14px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+
+  padding: 0 17px;
+
+  border: none;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--ga-primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: var(--ga-primary-dark);
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-danger {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+.field label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+
+  min-height: 44px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #cbd5e1;
+
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  font: inherit;
+}
+
+.field textarea {
+  min-height: 110px;
+
+  resize: vertical;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.15);
+
+  border-color: var(--ga-primary);
+}
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.badge-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* =========================================================
+   ALERTS
+========================================================= */
+
+.alert {
+  padding: 12px 15px;
+
+  margin-bottom: 16px;
+
+  border-radius: 9px;
+}
+
+.alert-success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.alert-danger {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+  :root {
+    --ga-sidebar-width: 280px;
+  }
+}
+
+@media (max-width: 900px) {
+  .garage-sidebar {
+    position: relative;
+
+    width: 100%;
+    height: auto;
+
+    padding: 20px;
+  }
+
+  .garage-main {
+    margin-left: 0;
+
+    width: 100%;
+
+    padding: 22px;
+  }
+
+  .garage-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .garage-nav a {
+    width: auto;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .garage-nav {
+    flex-direction: column;
+  }
+
+  .garage-nav a {
+    width: 100%;
+  }
+
+  .garage-main {
+    padding: 18px;
+  }
+}
+
+/* =========================================================
+   GARAGE NEWS PAGE
+========================================================= */
+
+.page-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  font-weight: 800;
+  color: #101828;
+}
+
+.page-header p {
+  margin: 0;
+  color: #667085;
+  font-size: 16px;
+}
+
+/* Primary button */
+a.btn-primary,
+button.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+  padding: 11px 20px;
+
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+
+  border: none !important;
+  border-radius: 9px;
+
+  text-decoration: none !important;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+a.btn-primary:hover,
+button.btn-primary:hover {
+  background-color: #1d4ed8 !important;
+  color: #ffffff !important;
+}
+
+/* Secondary button */
+a.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+  padding: 10px 18px;
+
+  background: #e2e8f0;
+  color: #0f172a;
+
+  border-radius: 9px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* News form card */
+.news-form-card {
+  max-width: 900px;
+}
+
+/* Form field */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #344054;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 11px 13px;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #101828;
+
+  font-family: inherit;
+  font-size: 15px;
+}
+
+.form-group input,
+.form-group select {
+  min-height: 45px;
+}
+
+.form-group textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.12);
+  border-color: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

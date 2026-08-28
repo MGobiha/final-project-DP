@@ -1,0 +1,16 @@
+@media print {
+  .sidebar,
+  .topbar .user-chip,
+  .btn {
+    display: none !important;
+  }
+  .app-shell {
+    display: block;
+  }
+  .main {
+    padding: 0;
+  }
+  .card {
+    box-shadow: none;
+  }
+}
