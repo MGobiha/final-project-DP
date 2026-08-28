@@ -1,2 +1,0 @@
-const form=document.querySelector('#chatForm'),input=document.querySelector('#chatMessage'),messages=document.querySelector('.messages');
-form?.addEventListener('submit',e=>{e.preventDefault();const text=input.value.trim();if(!text)return;messages.insertAdjacentHTML('beforeend',`<div class="message user">${text}</div>`);input.value='';setTimeout(()=>messages.insertAdjacentHTML('beforeend','<div class="message bot">Based on your vehicle history, check the engine oil level and schedule an inspection if the warning persists.</div>'),400)});
